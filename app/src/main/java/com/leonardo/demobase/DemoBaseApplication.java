@@ -1,4 +1,5 @@
-import android.annotation.SuppressLint;
+package com.leonardo.demobase;
+
 import android.app.Application;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
