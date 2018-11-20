@@ -2,6 +2,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.lzy.okserver.OkDownload;
 
 /**
  * Description:
