@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity implements MainPageContract.IMain
   @Override protected void onStart() {
     super.onStart();
     isActive = true;
+    playerViewPresenter.loadData();
   }
 
   @Override protected void onStop() {

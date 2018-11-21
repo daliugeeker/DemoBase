@@ -11,10 +11,12 @@ import com.leonardo.demobase.basestructure.IBaseView;
  */
 
 public interface PlayerViewContract {
-  interface IPlayerView extends IBaseView<IPlayerPresenter>{
-
+  interface IPlayerView<T> extends IBaseView<IPlayerPresenter> {
+    void getPresenter(IPlayerPresenter presenter);
+    void onDataLoaded(T data);
   }
-  interface IPlayerPresenter extends IBasePresenter<IPlayerView>{
 
+  interface IPlayerPresenter extends IBasePresenter<IPlayerView> {
+    void loadData();
   }
 }

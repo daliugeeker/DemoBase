@@ -8,6 +8,6 @@ package com.leonardo.demobase.basestructure;
  */
 
 public interface IBaseView<P extends IBasePresenter> {
-  //void setPresenter(P presenter);
+  //void getPresenter(P presenter);
   boolean isActive();
 }
