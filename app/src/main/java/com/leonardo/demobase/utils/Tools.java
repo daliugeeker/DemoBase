@@ -1,6 +1,7 @@
 package com.leonardo.demobase.utils;
 
 import android.net.Uri;
+import android.os.Environment;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -17,6 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.leonardo.demobase.DemoBaseApplication;
+import java.io.File;
 
 /**
  * Description:
@@ -66,5 +68,12 @@ public class Tools {
         throw new IllegalStateException("Unsupported type: " + type);
       }
     }
+  }
+
+  public static String generateDir() {
+    return Environment.getExternalStorageDirectory().getPath()
+        + File.separator
+        + "demobase"
+        + File.separator;
   }
 }

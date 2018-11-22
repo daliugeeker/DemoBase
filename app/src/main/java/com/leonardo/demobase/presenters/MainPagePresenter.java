@@ -22,6 +22,6 @@ public class MainPagePresenter implements MainPageContract.IMainPagePresenter {
   }
 
   @Override public MainPageContract.IMainPageView getAttachedView() {
-    return null;
+    return view;
   }
 }
