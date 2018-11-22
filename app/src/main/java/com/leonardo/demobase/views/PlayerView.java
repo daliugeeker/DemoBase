@@ -156,17 +156,18 @@ public class PlayerView extends FrameLayout implements PlayerViewContract.IPlaye
 
     private final View rootView;
 
-    private com.google.android.exoplayer2.ui.PlayerView leoPlayerView;
-    //private LeoPlayerControlView playController;
+    private LeoPlayerView leoPlayerView;
+    private LeoPlayerControlView playController;
     private Button playButton;
     private TextView progress;
 
     ViewHolder(View rootView) {
       this.rootView = rootView;
       this.leoPlayerView = rootView.findViewById(R.id.leo_video_player);
-      //this.playController = leoPlayerView.getVideoController();
+      this.playController = leoPlayerView.getVideoController();
       this.playButton = rootView.findViewById(R.id.play_button);
       this.progress = rootView.findViewById(R.id.progress);
+      leoPlayerView.setPlayer(simpleExoPlayer);
     }
   }
 }
