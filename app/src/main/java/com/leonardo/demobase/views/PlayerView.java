@@ -1,7 +1,9 @@
 package com.leonardo.demobase.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +28,19 @@ import com.leonardo.demobase.DemoBaseApplication;
 import com.leonardo.demobase.R;
 import com.leonardo.demobase.basestructure.IBasePresenter;
 import com.leonardo.demobase.contracts.PlayerViewContract;
+import com.leonardo.demobase.services.DownloadService;
+import com.leonardo.demobase.utils.DBThreadPool;
 import com.leonardo.demobase.utils.Tools;
 import com.leonardo.demobase.widgets.exo.DBLog;
 import com.leonardo.demobase.widgets.exo.LeoPlayerControlView;
 import com.leonardo.demobase.widgets.exo.LeoPlayerView;
 import com.lzy.okgo.model.Progress;
-import java.io.File;
-
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import java.util.concurrent.TimeUnit;
+import io.reactivex.Observable;
 /**
  * Description:
  *
@@ -48,6 +56,7 @@ public class PlayerView extends FrameLayout implements PlayerViewContract.IPlaye
   private PlayerViewContract.IPlayerPresenter presenter;
   private String TAG = DBLog.DB_TAG + "player_view";
   private Player.EventListener playerEventListener;
+  private Disposable disposable;
 
   public PlayerView(@NonNull Context context) {
     super(context);
@@ -129,11 +138,47 @@ public class PlayerView extends FrameLayout implements PlayerViewContract.IPlaye
   private void addListeners() {
     viewHolder.playButton.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
-
         if (null != presenter) {
           DBLog.d(TAG, "play button clicked");
           presenter.loadData();
         }
+      }
+    });
+
+    viewHolder.downloadButton.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View v) {
+        final Intent intent1 = new Intent(DemoBaseApplication.getInstance(), DownloadService.class);
+        String url1 = "http://test-cdn.yesincarapi.com/lkmotion/boss/芒果TV.apk";
+        String fileName1 = url1.substring(url1.lastIndexOf("/") + 1);
+        intent1.putExtra(DownloadService.FILE_NAME, fileName1);
+        intent1.putExtra(DownloadService.DOWNLOAD_URL, url1);
+        final Intent intent2 = new Intent(DemoBaseApplication.getInstance(), DownloadService.class);
+        String url2 = "http://test-cdn.yesincarapi.com/lkmotion/boss/爱奇艺HD.apk";
+        String fileName2 = url2.substring(url1.lastIndexOf("/") + 1);
+        intent2.putExtra(DownloadService.FILE_NAME, fileName2);
+        intent2.putExtra(DownloadService.DOWNLOAD_URL, url2);
+
+        context.startService(intent1);
+        Observable.timer(2, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.from(DBThreadPool.getThreadPool()))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Long>() {
+              @Override public void onSubscribe(Disposable d) {
+                disposable = d;
+              }
+
+              @Override public void onNext(Long aLong) {
+                context.startService(intent2);
+              }
+
+              @Override public void onError(Throwable e) {
+
+              }
+
+              @Override public void onComplete() {
+                closeTimer();
+              }
+            });
       }
     });
 
@@ -152,6 +197,12 @@ public class PlayerView extends FrameLayout implements PlayerViewContract.IPlaye
     simpleExoPlayer.addListener(playerEventListener);
   }
 
+  private void closeTimer() {
+    if (disposable != null) {
+      disposable.dispose();
+    }
+  }
+
   class ViewHolder {
 
     private final View rootView;
@@ -160,9 +211,11 @@ public class PlayerView extends FrameLayout implements PlayerViewContract.IPlaye
     private LeoPlayerControlView playController;
     private Button playButton;
     private TextView progress;
+    private Button downloadButton;
 
     ViewHolder(View rootView) {
       this.rootView = rootView;
+      this.downloadButton = rootView.findViewById(R.id.download_button);
       this.leoPlayerView = rootView.findViewById(R.id.leo_video_player);
       this.playController = leoPlayerView.getVideoController();
       this.playButton = rootView.findViewById(R.id.play_button);

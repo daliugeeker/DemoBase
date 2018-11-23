@@ -33,7 +33,9 @@ public class PlayerViewPresenter implements PlayerViewContract.IPlayerPresenter 
   @Override public void onDetachView() {
     attachedView.getPresenter(null);
     this.attachedView = null;
-    if (null != downloadTask) downloadTask.pause();
+    if (null != downloadTask) {
+      downloadTask.unRegister("wushuang");
+      downloadTask.pause();}
   }
 
   @Override public PlayerViewContract.IPlayerView getAttachedView() {
